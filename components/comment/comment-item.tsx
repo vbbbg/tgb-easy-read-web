@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClientTime } from "@/components/comment/client-time"
+import { CommentImage } from "./comment-image"
 
 export type Quote = {
   time: string
@@ -49,7 +50,7 @@ export function CommentItem({
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            <ClientTime dateString={comment.created_at} />
+            <ClientTime dateString={comment.time} />
           </p>
         </div>
       </CardHeader>
@@ -59,11 +60,7 @@ export function CommentItem({
           {comment.content.text}
         </p>
         {comment.content.image && (
-          <img
-            src={comment.content.image}
-            alt="Comment image"
-            className="mt-4 rounded-lg max-w-full h-auto"
-          />
+          <CommentImage imageUrl={comment.content.image} />
         )}
       </CardContent>
 

@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server" // 确保导入的是服务端 client
+import { createClient } from "@/lib/supabase/server"
+import { startOfDay, endOfDay } from "date-fns" // 确保导入的是服务端 client
 
 /**
  * 根据楼层号获取单条评论数据的公共方法
@@ -36,6 +37,7 @@ export async function getComments(
   pageSize: number,
   isAuthorOnly: boolean,
   ascending: boolean,
+  date?: number,
 ) {
   const supabase = await createClient()
 
@@ -51,8 +53,19 @@ export async function getComments(
   if (isAuthorOnly) {
     query = query.eq("is_op", true)
   }
+  // 3. 如果传入了 date，则查询对应日期的评论
+  if (date) {
+    const selectedDate = new Date(date) // Assuming date is a timestamp in milliseconds
+    const start = startOfDay(selectedDate).toLocaleString("en-US", {
+      timeZone: "Asia/Shanghai",
+    })
+    const end = endOfDay(selectedDate).toLocaleString("en-US", {
+      timeZone: "Asia/Shanghai",
+    })
+    query = query.gte("time", start).lt("time", end)
+  }
 
-  // 3. 执行查询
+  // 4. 执行查询
   const { data: comments, error } = await query
 
   // 4. 错误处理

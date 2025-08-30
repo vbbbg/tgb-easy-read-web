@@ -6,9 +6,10 @@ async function fetchComments(
   page: number,
   isAuthorOnly: boolean,
   ascending: boolean,
+  date?: number,
 ): Promise<Comment[]> {
   const response = await fetch(
-    `/api/comments?page=${page}&isAuthorOnly=${isAuthorOnly}&ascending=${ascending}`,
+    `/api/comments?page=${page}&isAuthorOnly=${isAuthorOnly}&ascending=${ascending}&date=${date}`,
   )
   if (!response.ok) {
     throw new Error("Failed to fetch comments")
@@ -21,10 +22,10 @@ export default function useComment(initialComments: Comment[]) {
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  const pageRef = useRef(2)
+  const pageRef = useRef(1)
 
   const loadMoreComments = useCallback(
-    async ({ ascending, authorOnly }: FormValue) => {
+    async ({ ascending, authorOnly, date }: FormValue) => {
       if (isLoading || !hasMore) return
       setIsLoading(true)
 
@@ -32,6 +33,7 @@ export default function useComment(initialComments: Comment[]) {
         pageRef.current,
         authorOnly,
         ascending,
+        date,
       )
       if (newComments.length > 0) {
         setComments((prevComments) => [...prevComments, ...newComments])
@@ -45,12 +47,16 @@ export default function useComment(initialComments: Comment[]) {
     [],
   )
 
-  const handleFilterChange = async ({ ascending, authorOnly }: FormValue) => {
+  const handleFilterChange = async ({
+    ascending,
+    authorOnly,
+    date,
+  }: FormValue) => {
     pageRef.current = 1
     setComments([])
     setHasMore(true)
     setIsLoading(true)
-    const newComments = await fetchComments(1, authorOnly, ascending)
+    const newComments = await fetchComments(1, authorOnly, ascending, date)
     setComments(newComments)
     setIsLoading(false)
 

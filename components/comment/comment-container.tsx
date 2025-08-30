@@ -1,60 +1,45 @@
 "use client"
 
-import {
-  CommentControls,
-  FormValue,
-} from "@/components/comment/comment-controls"
-import { useRef } from "react"
-import { UseFormReturn } from "react-hook-form"
-import type { Comment } from "@/components/comment/comment-item"
+import { getFormValuesFromWindowUrl } from "@/components/comment/comment-controls"
+import { useEffect } from "react"
 import { CommentList } from "@/components/comment/comment-list"
-import useComment from "@/hooks/useComment"
-import useObserver from "@/hooks/useObserver"
+import useComment from "@/hooks/use-comment"
+import useObserver from "@/hooks/use-observer"
 
-export function CommentContainer({
-  initialComments,
-}: {
-  initialComments: Comment[]
-}) {
-  const controlsRef = useRef<{ form: UseFormReturn<FormValue> }>(undefined)
-
+export function CommentContainer() {
   const { comments, isLoading, hasMore, handleFilterChange, loadMoreComments } =
-    useComment(initialComments)
+    useComment([])
 
   const { observerRef } = useObserver(async () => {
     if (isLoading) return
 
     if (hasMore) {
-      await loadMoreComments(controlsRef.current?.form?.getValues()!)
+      await loadMoreComments(getFormValuesFromWindowUrl())
     }
   })
 
-  controlsRef.current?.form?.subscribe({
-    formState: {
-      values: true,
-    },
-    callback: async (value) => {
-      const name = value.name as keyof FormValue
-      switch (name) {
-        case "authorOnly":
-        case "ascending":
-          await handleFilterChange(value.values)
-          break
-        default:
-          break
-      }
-    },
-  })
+  useEffect(() => {
+    loadMoreComments(getFormValuesFromWindowUrl()).then()
+  }, [])
+
+  useEffect(() => {
+    const onLocationChange = async () => {
+      await handleFilterChange(getFormValuesFromWindowUrl())
+    }
+
+    window.addEventListener("popstate", onLocationChange)
+
+    return () => {
+      window.removeEventListener("popstate", onLocationChange)
+    }
+  }, [])
 
   return (
-    <div>
-      <CommentControls ref={controlsRef} />
-      <CommentList
-        comments={comments}
-        isLoading={isLoading}
-        hasMore={hasMore}
-        lastCommentElementRef={observerRef}
-      />
-    </div>
+    <CommentList
+      comments={comments}
+      isLoading={isLoading}
+      hasMore={hasMore}
+      lastCommentElementRef={observerRef}
+    />
   )
 }

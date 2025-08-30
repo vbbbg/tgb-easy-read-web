@@ -6,9 +6,12 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get("page") || "1")
   const isAuthorOnly = searchParams.get("isAuthorOnly") === "true"
   const ascending = searchParams.get("ascending") === "true"
+  const date = searchParams.get("date")
+    ? Number(searchParams.get("date"))
+    : undefined
 
   try {
-    const comments = await getComments(page, 10, isAuthorOnly, ascending)
+    const comments = await getComments(page, 10, isAuthorOnly, ascending, date)
     return NextResponse.json(comments)
   } catch (error) {
     return NextResponse.json(
