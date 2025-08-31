@@ -134,7 +134,7 @@ export const CommentControls = () => {
                     >
                       {field.value
                         ? new Date(field.value).toLocaleDateString()
-                        : "按日期进行查看"}
+                        : "从某日开始看"}
                     </Button>
                     <Eraser
                       className="cursor-pointer"

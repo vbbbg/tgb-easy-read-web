@@ -59,10 +59,7 @@ export async function getComments(
     const start = startOfDay(selectedDate).toLocaleString("en-US", {
       timeZone: "Asia/Shanghai",
     })
-    const end = endOfDay(selectedDate).toLocaleString("en-US", {
-      timeZone: "Asia/Shanghai",
-    })
-    query = query.gte("time", start).lt("time", end)
+    query = query.gte("time", start)
   }
 
   // 4. 执行查询
