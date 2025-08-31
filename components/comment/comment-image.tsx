@@ -1,13 +1,15 @@
-"use client"
+'use client'
 
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
-interface ImagePreviewOverlayProps {
+interface CommentImageProps {
   imageUrl: string
+  commentText: string
+  commentTime: string
 }
 
-export function CommentImage({ imageUrl }: ImagePreviewOverlayProps) {
+export function CommentImage({ imageUrl, commentText, commentTime }: CommentImageProps) {
   const [showImage, setShowImage] = useState(false)
 
   return (
@@ -16,8 +18,11 @@ export function CommentImage({ imageUrl }: ImagePreviewOverlayProps) {
         <Button
           variant="outline"
           size="sm"
-          className="mt-4"
+          className="mt-4 comment-image-placeholder"
           onClick={() => setShowImage(true)}
+          data-image-url={imageUrl}
+          data-comment-text={commentText}
+          data-comment-time={commentTime}
         >
           查看图片
         </Button>

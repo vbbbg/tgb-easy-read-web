@@ -60,7 +60,11 @@ export function CommentItem({
           {comment.content.text}
         </p>
         {comment.content.image && (
-          <CommentImage imageUrl={comment.content.image} />
+          <CommentImage
+            imageUrl={comment.content.image}
+            commentText={comment.content.text}
+            commentTime={comment.time}
+          />
         )}
       </CardContent>
 

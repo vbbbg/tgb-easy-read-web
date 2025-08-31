@@ -5,6 +5,8 @@ import { useEffect } from "react"
 import { CommentList } from "@/components/comment/comment-list"
 import useComment from "@/hooks/use-comment"
 import useObserver from "@/hooks/use-observer"
+import { useImageObserver } from "@/hooks/use-image-observer"
+import { VisibleImagePreview } from "@/components/comment/visible-image-preview"
 
 export function CommentContainer() {
   const { comments, isLoading, hasMore, handleFilterChange, loadMoreComments } =
@@ -34,12 +36,17 @@ export function CommentContainer() {
     }
   }, [])
 
+  const { visibleImageData, containerRef } = useImageObserver(comments)
+
   return (
-    <CommentList
-      comments={comments}
-      isLoading={isLoading}
-      hasMore={hasMore}
-      lastCommentElementRef={observerRef}
-    />
+    <div ref={containerRef}>
+      <CommentList
+        comments={comments}
+        isLoading={isLoading}
+        hasMore={hasMore}
+        lastCommentElementRef={observerRef}
+      />
+      <VisibleImagePreview visibleImageData={visibleImageData} />
+    </div>
   )
 }

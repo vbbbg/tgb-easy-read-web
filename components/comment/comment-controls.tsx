@@ -32,7 +32,13 @@ export const CommentControls = () => {
 
   const [open, setOpen] = useState(false)
 
-  const form = useForm({ defaultValues: getFormValuesFromWindowUrl() })
+  const form = useForm<FormValue>({
+    defaultValues: { authorOnly: false, ascending: false, date: undefined },
+  })
+
+  useEffect(() => {
+    form.reset(getFormValuesFromWindowUrl())
+  }, [searchParams, form])
 
   useEffect(() => {
     form.subscribe({
