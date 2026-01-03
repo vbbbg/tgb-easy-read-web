@@ -6,10 +6,11 @@ async function fetchComments(
   page: number,
   isAuthorOnly: boolean,
   ascending: boolean,
+  postId: string,
   date?: number,
 ): Promise<Comment[]> {
   const response = await fetch(
-    `/api/comments?page=${page}&isAuthorOnly=${isAuthorOnly}&ascending=${ascending}&date=${date}`,
+    `/api/comments?page=${page}&isAuthorOnly=${isAuthorOnly}&ascending=${ascending}&date=${date}&post_id=${postId}`,
   )
   if (!response.ok) {
     throw new Error("Failed to fetch comments")
@@ -17,7 +18,7 @@ async function fetchComments(
   return response.json()
 }
 
-export default function useComment(initialComments: Comment[]) {
+export default function useComment(initialComments: Comment[], postId: string) {
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
@@ -33,6 +34,7 @@ export default function useComment(initialComments: Comment[]) {
         pageRef.current,
         authorOnly,
         ascending,
+        postId,
         date,
       )
       if (newComments.length > 0) {
@@ -44,7 +46,7 @@ export default function useComment(initialComments: Comment[]) {
       }
       setIsLoading(false)
     },
-    [],
+    [postId, isLoading, hasMore],
   )
 
   const handleFilterChange = async ({
@@ -56,7 +58,13 @@ export default function useComment(initialComments: Comment[]) {
     setComments([])
     setHasMore(true)
     setIsLoading(true)
-    const newComments = await fetchComments(1, authorOnly, ascending, date)
+    const newComments = await fetchComments(
+      1,
+      authorOnly,
+      ascending,
+      postId,
+      date,
+    )
     setComments(newComments)
     setIsLoading(false)
 

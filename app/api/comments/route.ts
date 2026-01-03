@@ -9,9 +9,17 @@ export async function GET(request: Request) {
   const date = searchParams.get("date")
     ? Number(searchParams.get("date"))
     : undefined
+  const postId = searchParams.get("post_id") || "2hIcnFHiTnx"
 
   try {
-    const comments = await getComments(page, 10, isAuthorOnly, ascending, date)
+    const comments = await getComments(
+      page,
+      10,
+      isAuthorOnly,
+      ascending,
+      postId,
+      date,
+    )
     return NextResponse.json(comments)
   } catch (error) {
     return NextResponse.json(

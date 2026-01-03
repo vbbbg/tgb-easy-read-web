@@ -3,6 +3,7 @@
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { Input } from "@/components/ui/input"
 import {
   Form,
   FormControl,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   Popover,
   PopoverContent,
@@ -33,7 +34,11 @@ export const CommentControls = () => {
   const [open, setOpen] = useState(false)
 
   const form = useForm<FormValue>({
-    defaultValues: { authorOnly: false, ascending: false, date: undefined },
+    defaultValues: {
+      authorOnly: false,
+      ascending: false,
+      date: undefined,
+    },
   })
 
   useEffect(() => {
@@ -62,7 +67,6 @@ export const CommentControls = () => {
               newSearchParams.delete("date")
             }
 
-            // router.push(`?${newSearchParams.toString()}`)
             window.history.pushState(null, "", `?${newSearchParams.toString()}`)
 
             // communicate to Routes that URL has changed
@@ -74,7 +78,7 @@ export const CommentControls = () => {
         }
       },
     })
-  }, [])
+  }, [searchParams])
 
   return (
     <Form {...form}>
@@ -105,7 +109,7 @@ export const CommentControls = () => {
               <div className="space-y-0.5">
                 <FormLabel>排序</FormLabel>
                 <FormDescription>
-                  切换为 {field.value ? "倒序" : "正序"} 查看
+                  切换为 {field.value ? "正序" : "倒序"} 查看
                 </FormDescription>
               </div>
               <FormControl>

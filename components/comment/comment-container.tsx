@@ -8,9 +8,13 @@ import useObserver from "@/hooks/use-observer"
 import { useImageObserver } from "@/hooks/use-image-observer"
 import { VisibleImagePreview } from "@/components/comment/visible-image-preview"
 
+import { useSearchParams } from "next/navigation"
+
 export function CommentContainer() {
+  const searchParams = useSearchParams()
+  const postId = searchParams.get("post_id") || "2hIcnFHiTnx"
   const { comments, isLoading, hasMore, handleFilterChange, loadMoreComments } =
-    useComment([])
+    useComment([], postId)
 
   const { observerRef } = useObserver(async () => {
     if (isLoading) return
